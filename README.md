@@ -6,10 +6,10 @@
 ## TL;DR
 
 - Foundry projects are the **recommended starting point** for most generative AI applications and agents
-- Hub-based projects are primarily used when Azure Machine Learning capabilities are required, rather than for typical generative AI application development
-- Enterprise networking typically integrates with the **landing zone** — hub-spoke VNets, centralized DNS, firewall, and Private Link
-- Model inference runs in **Microsoft-managed infrastructure** — customer VNets provide secure access to supporting services via private endpoints
-- Private endpoints provide secure connectivity to AI services but **do not move the model runtime** into the customer VNet
+- Hub-based projects are primarily used when **Azure Machine Learning** capabilities are required (training, fine-tuning, custom model hosting)
+- Enterprise networking typically integrates with the **Azure landing zone** (hub-spoke VNets, centralized DNS, firewall, Private Link)
+- Model inference runs in **Microsoft-managed infrastructure** — not inside the customer VNet
+- Private endpoints provide secure connectivity from VNets to AI services but **do not move the model runtime** into the VNet
 
 ## Overview
 
@@ -19,7 +19,7 @@ Microsoft Foundry is transitioning from a hub-based resource model — where mul
 
 **Hub-based Project Architecture:** An AI Hub acts as shared infrastructure, and hub-based projects live within the hub. The hub provides centralized configuration and shared resources used by projects, such as connections to Azure OpenAI, AI Services, AI Search, Storage, and Key Vault.
 
-**Foundry Project Architecture:** A Foundry Resource hosts Foundry projects directly — no hub required. Projects are created under the Foundry resource and provide isolated environments where developers build AI applications using models, agents, and tools. The Foundry resource exposes the Foundry API and Azure OpenAI–compatible APIs, accessed through the Foundry SDK or Azure OpenAI SDK. Tools and knowledge sources (SharePoint, Fabric, AI Search, Storage, Functions, etc.) can be connected as needed.
+**Foundry Project Architecture:** A Foundry Resource hosts Foundry projects directly — no hub required. Projects are created under the Foundry resource and provide isolated environments where developers build AI applications using models, agents, and tools. The Foundry resource exposes the Foundry API and Azure OpenAI–compatible APIs, accessed through the Foundry SDK or Azure OpenAI SDK. Tools and knowledge sources (SharePoint, Fabric, AI Search, Storage, Functions, etc.) can be connected as required.
 
 **Architecture guidance:** Foundry projects are the recommended starting point for most generative AI applications and agents. Hub-based projects remain available for scenarios that require Azure Machine Learning capabilities, such as model training, fine-tuning, or hosting custom or open-source models. Microsoft is actively guiding customers with existing hub-based projects to [migrate to Foundry projects](https://learn.microsoft.com/azure/foundry-classic/how-to/migrate-project).
 
@@ -34,7 +34,7 @@ From an infrastructure perspective, architects must decide between:
 
 This guide focuses specifically on the **networking and governance implications** of each model for enterprise environments.
 
-### Old vs New Architecture
+### Hub-Based vs Foundry Project Architecture
 
 ```
 Old: Azure AI Studio                    New: Microsoft Foundry
@@ -51,7 +51,7 @@ Networking was hub-scoped.               Connectivity configured per service.
 Required managed VNet or BYOV.           Private endpoints per supporting service.
 ```
 
-> **Note:** Microsoft's guidance on this topic is still scattered across Foundry docs, Azure ML docs, and networking guidance. There is no single CSA-level architecture guide yet. This repo consolidates the current best practice based on available documentation and platform design.
+> **Note:** Microsoft's guidance on this topic is still scattered across Foundry docs, Azure ML docs, and networking guidance. This repo consolidates the current best practice based on available documentation and platform design.
 
 ---
 
@@ -684,8 +684,6 @@ For sovereignty requirements:
 ---
 
 ## Common Azure AI Foundry Networking Mistakes (Field Notes)
-
-These are the issues CSAs see repeatedly in enterprise deployments.
 
 ### 1. Missing or incorrect private DNS zones
 

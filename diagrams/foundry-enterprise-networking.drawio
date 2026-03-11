@@ -1,0 +1,109 @@
+<mxfile host="app.diagrams.net" type="device">
+  <diagram id="1" name="Enterprise Networking Reference Architecture">
+    <mxGraphModel dx="1422" dy="830" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- Corporate Network -->
+        <mxCell id="10" value="Corporate Network / On-Premises" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="350" y="30" width="300" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- ExpressRoute / VPN arrow -->
+        <mxCell id="11" value="ExpressRoute / VPN" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jetSize=auto;fontSize=11;" edge="1" parent="1" source="10" target="20">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Hub VNet -->
+        <mxCell id="20" value="Hub VNet" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=top;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="100" y="130" width="800" height="150" as="geometry"/>
+        </mxCell>
+        <mxCell id="21" value="Azure Firewall" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fce5cd;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="20">
+          <mxGeometry x="30" y="50" width="150" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="22" value="ExpressRoute&#xa;Gateway" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fce5cd;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="20">
+          <mxGeometry x="220" y="50" width="150" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="23" value="Private DNS&#xa;Zones" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fce5cd;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="20">
+          <mxGeometry x="420" y="50" width="150" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="24" value="VPN Gateway" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fce5cd;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="20">
+          <mxGeometry x="620" y="50" width="150" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- VNet Peering arrow -->
+        <mxCell id="30" value="VNet Peering" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jetSize=auto;fontSize=11;" edge="1" parent="1" source="20" target="40">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Spoke VNet -->
+        <mxCell id="40" value="Spoke VNet (AI Workloads)" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=top;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="100" y="340" width="800" height="150" as="geometry"/>
+        </mxCell>
+        <mxCell id="41" value="Application&#xa;Workloads" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="40">
+          <mxGeometry x="30" y="50" width="150" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="42" value="Container&#xa;Environments" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="40">
+          <mxGeometry x="220" y="50" width="150" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="43" value="Private&#xa;Endpoints" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;fontStyle=1;" vertex="1" parent="40">
+          <mxGeometry x="420" y="50" width="150" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="44" value="Data Services" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="40">
+          <mxGeometry x="620" y="50" width="150" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- Private Link arrow -->
+        <mxCell id="50" value="Private Link" style="edgeStyle=orthogonalEdgeStyle;rounded=0;dashed=1;dashPattern=8 8;strokeColor=#9673a6;strokeWidth=2;fontSize=11;fontColor=#9673a6;" edge="1" parent="1" source="43" target="60">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Microsoft-Managed Infrastructure -->
+        <mxCell id="60" value="Microsoft-Managed Infrastructure" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=top;fillColor=#f5f5f5;strokeColor=#999999;fontSize=14;fontStyle=1;dashed=1;dashPattern=12 12;" vertex="1" parent="1">
+          <mxGeometry x="100" y="560" width="800" height="250" as="geometry"/>
+        </mxCell>
+
+        <!-- Foundry Resource container -->
+        <mxCell id="61" value="Foundry Resource" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=top;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;fontStyle=1;" vertex="1" parent="60">
+          <mxGeometry x="30" y="45" width="370" height="130" as="geometry"/>
+        </mxCell>
+        <mxCell id="62" value="Project A" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" vertex="1" parent="61">
+          <mxGeometry x="15" y="35" width="105" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="63" value="Project B" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" vertex="1" parent="61">
+          <mxGeometry x="130" y="35" width="105" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="64" value="Project C" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" vertex="1" parent="61">
+          <mxGeometry x="245" y="35" width="105" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="65" value="Model Inference (Microsoft-managed compute)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#b3d1ff;strokeColor=#6c8ebf;fontSize=10;fontStyle=2;" vertex="1" parent="61">
+          <mxGeometry x="15" y="85" width="340" height="30" as="geometry"/>
+        </mxCell>
+
+        <!-- Supporting services -->
+        <mxCell id="66" value="Azure&#xa;OpenAI" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="60">
+          <mxGeometry x="430" y="50" width="80" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="67" value="Azure&#xa;Storage" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="60">
+          <mxGeometry x="525" y="50" width="80" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="68" value="Azure AI&#xa;Search" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="60">
+          <mxGeometry x="620" y="50" width="80" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="69" value="Azure&#xa;Key Vault" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="60">
+          <mxGeometry x="700" y="50" width="80" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="70" value="Supporting Services (Private Endpoint targets)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontStyle=2;fontColor=#666666;" vertex="1" parent="60">
+          <mxGeometry x="430" y="110" width="350" height="25" as="geometry"/>
+        </mxCell>
+
+        <!-- Key insight callout -->
+        <mxCell id="71" value="Model compute runs HERE — not inside your VNet" style="shape=note;whiteSpace=wrap;html=1;size=14;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;fontStyle=1;align=center;" vertex="1" parent="60">
+          <mxGeometry x="100" y="190" width="280" height="45" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

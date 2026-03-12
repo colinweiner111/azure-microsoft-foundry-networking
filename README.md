@@ -10,6 +10,38 @@
 - Enterprise networking typically integrates with the **Azure landing zone** (hub-spoke VNets, centralized DNS, firewall, Private Link)
 - Model inference runs in **Microsoft-managed infrastructure** — not inside the customer VNet
 - Private endpoints provide secure connectivity from VNets to AI services but **do not move the model runtime** into the VNet
+- Foundry projects and hub-based projects can **coexist** and share enterprise infrastructure
+- **AI Hubs are not networking hubs** — they provide ML platform capabilities. Networking should be centralized in the landing zone architecture (hub VNets, firewall, private endpoints, DNS)
+
+### Important Architecture Clarification
+
+Despite the name, an **AI Hub is not primarily a networking construct**.
+
+AI Hubs exist to provide machine learning platform capabilities, including:
+
+- Model training
+- Fine-tuning
+- ML pipelines
+- Model lifecycle management
+
+Networking centralization should instead be implemented through the enterprise landing zone architecture, such as:
+
+- Hub-spoke VNets
+- Azure Firewall
+- Private DNS zones
+- Private endpoints
+
+Most generative AI applications built with Foundry projects do not require an AI Hub unless Azure Machine Learning capabilities are needed.
+
+The correct mental model is:
+
+| Concept | Role |
+|---|---|
+| **Landing Zone Hub VNet** | Networking |
+| **AI Hub** | ML infrastructure |
+| **Foundry Project** | AI application |
+
+---
 
 ## Overview
 
@@ -202,9 +234,20 @@ Not all features are available in both project types. This table summarizes the 
 
 ### Networking Impact
 
-A Hub introduces additional compute and storage resources that require their own private endpoint coverage. Standalone Foundry projects have a simpler networking footprint since they only consume managed API endpoints.
+A Hub introduces additional infrastructure components that may require their own networking configuration. When an AI Hub is deployed, it provisions Azure Machine Learning platform resources such as storage accounts, Key Vault, container registry, and managed compute. These resources may require private endpoint coverage, DNS entries, and firewall rules depending on the networking model used.
 
-This distinction directly affects the number of private endpoints, DNS zones, and firewall rules required in your environment.
+Standalone Foundry projects typically have a simpler networking footprint because they primarily consume Microsoft-managed service endpoints (such as Azure OpenAI and other AI services) rather than hosting compute or platform infrastructure within the customer subscription.
+
+This distinction affects several networking considerations:
+
+| Consideration | Foundry Projects Only | Hub-Based Architecture |
+|---|---|---|
+| Private endpoints | Required for supporting services (OpenAI, Storage, AI Search, Key Vault) | Additional endpoints may be required for ML platform resources |
+| DNS zones | Standard AI service private DNS zones | Additional zones depending on ML resources deployed |
+| Firewall rules | Primarily AI service endpoints | AI services plus ML platform dependencies |
+| Network complexity | Lower | Higher due to additional platform resources |
+
+In practice, most enterprise deployments centralize networking through the landing zone architecture (hub-spoke VNets, centralized DNS, and firewall inspection). Whether using Foundry projects or hub-based projects, the landing zone typically remains the primary networking control plane.
 
 ### Portal Experience
 
@@ -598,6 +641,57 @@ For sovereignty requirements:
 - Use Azure Policy to enforce allowed locations
 - Be aware that model inference may involve Microsoft-managed infrastructure in the same region — confirm with Microsoft support for specific compliance requirements
 - For EU data boundary, review [Microsoft EU Data Boundary documentation](https://learn.microsoft.com/privacy/eudb/eu-data-boundary-learn)
+
+---
+
+## Shared Infrastructure and Coexistence
+
+Foundry projects and hub-based projects can coexist in the same Azure environment.
+
+Although they are different project types with different parent resources, both models can share common enterprise infrastructure.
+
+Typical shared components include:
+
+- Hub-and-spoke networking architectures
+- Azure Firewall or Network Virtual Appliances
+- Private DNS zones
+- ExpressRoute or VPN connectivity
+- Private endpoints for AI and data services
+- Centralized logging and monitoring
+
+For example, both a Foundry resource and an AI Hub may be deployed within the same landing zone and connected to the same network infrastructure.
+
+### Example Architecture
+
+```
+Enterprise Landing Zone
+
+Hub VNet
+ ├ Azure Firewall
+ ├ Private DNS
+ ├ ExpressRoute / VPN
+ └ Shared Private Endpoints
+
+Spoke VNet – AI Platform
+ ├ Foundry Resource
+ │   ├ Foundry Project – App A
+ │   └ Foundry Project – App B
+ │
+ └ AI Hub
+     ├ Hub-based Project – Model Training
+     └ Hub-based Project – Fine-tuning
+```
+
+In this model:
+
+- **Foundry projects** are typically used for application development, agents, and generative AI workloads.
+- **Hub-based projects** are often used when Azure Machine Learning capabilities are required, such as model training, fine-tuning, or hosting open-source models.
+
+Shared services such as Azure AI Search, storage accounts, or APIs can be accessed by both project types through standard Azure networking and identity mechanisms.
+
+However, Foundry projects do not inherit hub resources directly. Connections, tools, and model deployments are typically configured at the project level.
+
+This approach allows organizations to adopt the newer Foundry project model while continuing to support existing hub-based workloads.
 
 ---
 

@@ -37,8 +37,8 @@ This guide focuses specifically on the **networking and governance implications*
 ### Hub-Based vs Foundry Project Architecture
 
 ```
-Old: Azure AI Studio                    New: Microsoft Foundry
-─────────────────────                   ──────────────────────
+Hub-Based Model                         Foundry Project Model
+──────────────────                      ─────────────────────
 AI Hub                                  Foundry Resource
  ├── Project                             ├── Project
  ├── Azure OpenAI                        ├── Project
@@ -46,7 +46,7 @@ AI Hub                                  Foundry Resource
  ├── Storage
  └── Key Vault
 
-Hub owned all child resources.           Projects are self-contained.
+The hub centralized shared resources.    Projects are self-contained.
 Networking was hub-scoped.               Connectivity configured per service.
 Required managed VNet or BYOV.           Private endpoints per supporting service.
 ```
@@ -87,24 +87,6 @@ Optional:
       └── Hub-based Projects
 ```
 
-Within each model:
-
-```
-Foundry Resource (Azure resource)
-      │
-      ├── Foundry Project (child resource)
-      ├── Foundry Project
-      └── Foundry Project
-```
-
-```
-Azure AI Hub (Azure resource)
-      │
-      ├── Hub-based Project (child resource)
-      ├── Hub-based Project
-      └── Hub-based Project
-```
-
 ### Two Types of Projects
 
 There are two types of projects in Microsoft Foundry:
@@ -116,29 +98,8 @@ There are two types of projects in Microsoft Foundry:
 
 Both are projects, but they sit under different Azure resources.
 
-**Option 1: Foundry Architecture (Default)**
-
-```
-Foundry Resource
-       │
-  Foundry Projects
-       │
-Models / Agents / APIs
-```
-
-Used for: agents, copilots, RAG, generative AI apps, Azure OpenAI models
-
-**Option 2: Hub-based Architecture (ML Platform)**
-
-```
-Azure AI Hub
-       │
-  Hub-based Projects
-       │
-Azure ML Compute / Pipelines
-```
-
-Used for: ML training, fine-tuning, OSS model hosting, ML pipelines, Prompt Flow
+- **Foundry Architecture (Default):** Foundry Resource → Foundry Projects → Models / Agents / APIs. Used for agents, copilots, RAG, generative AI apps, Azure OpenAI models.
+- **Hub-based Architecture (ML Platform):** Azure AI Hub → Hub-based Projects → Azure ML Compute / Pipelines. Used for ML training, fine-tuning, OSS model hosting, ML pipelines, Prompt Flow.
 
 ### What is a Foundry Project?
 
@@ -154,12 +115,7 @@ In the **old** Azure AI Studio model, every project required a hub. If you creat
 
 **This is no longer the case.**
 
-In the current Foundry model, Foundry projects are created directly under a Foundry resource — no hub is involved:
-
-```
-Foundry Resource  ──→  Foundry Project    (no hub)
-AI Hub            ──→  Hub-based Project  (hub required)
-```
+In the current Foundry model, Foundry projects are created directly under a Foundry resource — no hub is involved. A Foundry Resource creates Foundry Projects (no hub), while an AI Hub creates Hub-based Projects (hub required).
 
 These are **different project types** with different parent resources and different feature sets. A Foundry project is not the same as a hub-based project.
 
@@ -191,14 +147,6 @@ Use Foundry resource + projects when building typical AI applications:
 - Document processing
 - API-based model inference
 
-```
-Microsoft Foundry Resource
-        │
-        ├── Project (App A)
-        ├── Project (App B)
-        └── Project (App C)
-```
-
 This is the recommended starting point for most deployments.
 
 ### When You Need a Foundry AI Hub
@@ -213,15 +161,7 @@ You add a Foundry AI Hub when you need features that come from Azure Machine Lea
 | Deploy custom inference endpoints | ML model hosting |
 | ML experimentation workflows | Azure ML workspace features |
 
-```
-Microsoft Foundry Resource
-        │
-        └── Foundry AI Hub
-                │
-                ├── Project
-                ├── Project
-                └── Project
-```
+Projects are created under the Hub, which sits under the Foundry Resource.
 
 ### Key Distinction for Infrastructure Architects
 
@@ -233,7 +173,9 @@ If your only goal is centralized networking, you can achieve that through your l
 
 ### Feature Parity: Foundry Project vs Hub-Based Project
 
-Not all features are available in both project types. This table summarizes the current state:
+*Current as of March 2026*
+
+Not all features are available in both project types. This table summarizes the current state. For the official and always up-to-date comparison, see [Which type of project do I need?](https://learn.microsoft.com/azure/foundry-classic/what-is-foundry#which-type-of-project-do-i-need) in the Microsoft docs.
 
 | Feature | Foundry Project | Hub-Based Project |
 |---|---|---|
@@ -279,15 +221,7 @@ Microsoft Foundry has two portal experiences. The "classic" label refers to the 
 
 ### Where Microsoft Is Heading
 
-The new Foundry portal experience is project-centric, which strongly suggests the long-term architecture will be:
-
-```
-Foundry Resource
-      │
-   Projects
-```
-
-Hubs will likely remain as advanced ML infrastructure layers for organizations that need them.
+The new Foundry portal experience is project-centric, which strongly suggests the long-term architecture will be Foundry Resource → Projects directly. Hubs will likely remain as advanced ML infrastructure layers for organizations that need them.
 
 ---
 
@@ -304,14 +238,7 @@ Networking is used to securely access supporting services:
 | Azure AI Search | Retrieval for RAG solutions |
 | Azure Key Vault | Secret management |
 
-```
-Customer VNet
-      │
-  Private Endpoint
-      │
-  Azure OpenAI / Foundry
-  (Microsoft-managed runtime)
-```
+Private endpoints in the customer VNet provide secure access to Azure OpenAI / Foundry services running on Microsoft-managed infrastructure.
 
 ---
 
@@ -587,16 +514,7 @@ Enforce security baselines with Azure Policy:
 
 #### Environment Separation
 
-Separate Dev, Test, and Production at the resource level:
-
-```
-Production Resource Group          Dev/Test Resource Group
-   Foundry Resource (Prod)            Foundry Resource (Dev)
-      ├── Project (App A)                ├── Project (App A - dev)
-      └── Project (App B)                └── Project (App B - dev)
-```
-
-Use separate Foundry resources per environment — not just separate projects under the same resource. This ensures:
+Separate Dev, Test, and Production at the resource level. Use separate Foundry resources per environment — not just separate projects under the same resource (e.g. a Production Resource Group with a Prod Foundry Resource, and a separate Dev/Test Resource Group with a Dev Foundry Resource). This ensures:
 
 - Independent RBAC boundaries
 - Separate networking configuration

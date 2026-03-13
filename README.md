@@ -3,6 +3,25 @@
 
 *Current as of March 2026*
 
+## Table of Contents
+
+- [TL;DR](#tldr)
+- [Overview](#overview)
+- [Resource Types](#resource-types)
+  - [Two Types of Projects](#two-types-of-projects)
+- [Foundry Resource vs. AI Hub](#foundry-resource-vs-ai-hub)
+- [What Runs Inside Your Network](#what-runs-inside-your-network)
+- [Decision Guide](#decision-guide)
+- [Enterprise Architecture Tradeoffs](#enterprise-architecture-tradeoffs)
+- [Enterprise Networking Architecture (Landing Zone Pattern)](#enterprise-networking-architecture-landing-zone-pattern)
+  - [Identity and Access Security](#identity-and-access-security)
+  - [Governance](#governance)
+- [Data Protection](#data-protection)
+- [Shared Infrastructure and Coexistence](#shared-infrastructure-and-coexistence)
+- [Common Networking Mistakes (Field Notes)](#common-azure-ai-foundry-networking-mistakes-field-notes)
+- [Companion Repository](#companion-repository)
+- [References](#references)
+
 ## TL;DR
 
 - Foundry projects are the **recommended starting point** for most generative AI applications and agents
@@ -45,7 +64,7 @@ The correct mental model is:
 
 ## Overview
 
-Microsoft Foundry is transitioning from a hub-based resource model — where multiple Azure resources were managed independently — to a unified **platform as a service**.
+Microsoft Foundry is transitioning from the older hub-based model — where Azure resources were managed independently — to a unified **platform-as-a-service** architecture.
 
 ![Hub-based architecture vs Foundry as a service](images/project-structure.svg)
 
@@ -78,7 +97,7 @@ AI Hub                                  Foundry Resource
  ├── Storage
  └── Key Vault
 
-The hub centralized shared resources.    Projects are self-contained.
+The hub centralizes shared resources.    Projects are self-contained.
 Networking was hub-scoped.               Connectivity configured per service.
 Required managed VNet or BYOV.           Private endpoints per supporting service.
 ```
@@ -236,7 +255,7 @@ Not all features are available in both project types. This table summarizes the 
 
 A Hub introduces additional infrastructure components that may require their own networking configuration. When an AI Hub is deployed, it provisions Azure Machine Learning platform resources such as storage accounts, Key Vault, container registry, and managed compute. These resources may require private endpoint coverage, DNS entries, and firewall rules depending on the networking model used.
 
-Standalone Foundry projects typically have a simpler networking footprint because they primarily consume Microsoft-managed service endpoints (such as Azure OpenAI and other AI services) rather than hosting compute or platform infrastructure within the customer subscription.
+Standalone Foundry projects typically have a simpler networking footprint because they primarily consume Microsoft-managed AI service endpoints (such as Azure OpenAI and other AI services) rather than hosting platform infrastructure within the customer subscription.
 
 This distinction affects several networking considerations:
 
@@ -309,8 +328,8 @@ Private endpoints in the customer VNet provide secure access to Azure OpenAI / F
 **Rule of thumb:**
 
 - **One team, one app, API-based models** → Foundry resource + projects
-- **Multiple teams, shared platform** → Hub with projects
-- **Fine-tuning or open-source model hosting** → Hub required
+- **Multiple teams building separate apps** → Multiple Foundry projects (Hub not required)
+- **Shared ML platform (training, fine-tuning, shared models)** → Add an AI Hub
 - **Centralized networking only** → Landing zone architecture (Hub not required)
 
 ---
@@ -331,7 +350,7 @@ Organizations with high shared model usage may prefer centralized model deployme
 
 ### Disaster Recovery Design
 
-The Foundry resource is region-bound, so disaster recovery typically requires deploying an additional Foundry resource per region, which can increase duplication compared to hub-based designs.
+Foundry resources are region-bound, so disaster recovery typically requires deploying a separate Foundry resource in each region, which can increase duplication compared to hub-based designs.
 
 Typical DR pattern:
 
